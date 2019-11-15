@@ -1,0 +1,60 @@
+﻿@page "/fetchdata"
+
+@using DotNetCoreElasticClientSample.BlazorApp.Data
+@using DotNetCoreElasticClientSample.Lib
+@using Microsoft.AspNetCore.Components
+@inject MsgService MsgService
+
+<h1>Romancing Saga1 Message</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+<div class="form-group">
+    <label class="col-form-label" for="keyword">KeyWord</label>
+    <input class="form-control" type="text" id="keyword" @bind="@Keyword" />
+</div>
+
+<div class="form-group">
+    <button class="btn btn-primary" @onclick="GetMsg">Search</button>
+</div>
+
+@if (_msgList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var msg in _msgList)
+            {
+                <tr>
+                    <td>@msg.Message</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    Msg[] _msgList;
+
+    [Parameter]
+    public string Keyword { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Keyword = "アイスソード";
+        _msgList = await MsgService.GetMsgList(Keyword);
+    }
+
+    async Task GetMsg()
+    {
+        _msgList = await MsgService.GetMsgList(Keyword);
+    }
+}
